@@ -139,15 +139,15 @@ class eepCH341(object):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="CH341 EEPROM programmer utility")
     parser.add_argument("--serial", type=int, default=0,
-                        help="8-digit serial number (default: 13374201)")
-    parser.add_argument("--product", default="MESHTOAD",
-                        help="Product name (default: MESHTOAD)")
+                        help="8-digit serial number (default: 0)")
+    parser.add_argument("--product", default="MESHSTICK 1262",
+                        help="Product name (default: MESHSTICK 1262)")
     parser.add_argument("--major-version", type=int, default=1, dest="majorVersion",
                         help="Major version number (default: 1)")
-    parser.add_argument("--minor-version", type=int, default=2, dest="minorVersion",
-                        help="Minor version number (default: 2)")
+    parser.add_argument("--minor-version", type=int, default=0, dest="minorVersion",
+                        help="Minor version number (default: 0)")
     parser.add_argument("--bin", default="./ch341eeprom",
-                        help="Path to ch341eeprom binary (default: ch341eeprom from PATH)")
+                        help="Path to ch341eeprom binary (default: ch341eeprom in local folder)")
     args = parser.parse_args()
 
     cur_serial = int(args.serial)
