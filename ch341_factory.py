@@ -1,6 +1,9 @@
 import os
 import subprocess
 import argparse
+import time
+import binascii
+import hashlib
 
 class eepCH341(object):
     """
@@ -41,7 +44,7 @@ class eepCH341(object):
 
     def __str__(self):
         return f"EEPROM: {self.majorVersion}.{self.minorVersion} {self.serial} {self.product}"
-    
+
     def bytes(self):
         """
         Generate the EEPROM bytes
@@ -117,7 +120,7 @@ class eepCH341(object):
         os.remove("write_eeprom.bin")
 
         return r
-    
+
     def verify(self, bin_ch341eeprom: str):
         # Delete existing verify_eeprom.bin file if it exists
         if os.path.exists("verify_eeprom.bin"):
@@ -137,6 +140,8 @@ class eepCH341(object):
         return r
 
 if __name__ == "__main__":
+    timestr = time.strftime("%Y%m%d-%H%M%S")
+
     parser = argparse.ArgumentParser(description="CH341 EEPROM programmer utility")
     parser.add_argument("--serial", type=int, default=0,
                         help="8-digit serial number (default: 0)")
@@ -151,6 +156,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     cur_serial = int(args.serial)
+    logfile = open(timestr + ".log", 'w')
 
     while True:
         input(f"Attach serial number: {cur_serial}")
@@ -175,6 +181,16 @@ if __name__ == "__main__":
         print("New EEPROM Contents:")
         # Print the first 128 bytes of the EEPROM
         print(read_again[0:127])
+
         print("")
+
+        hash_object = hashlib.sha256(eeprom.serial.encode())
+        hexdigest = hash_object.hexdigest()
+        firstbyte = hexdigest[:2]
+        intfirstbyte = int(firstbyte, 16)
+        intfirstbyte = hex(((intfirstbyte << 4) | 2) % 256)[2:4]
+        macstr = f"{intfirstbyte}:" + hexdigest[2:4] + ":" + hexdigest[4:6] + ":" + hexdigest[6:8] + ":" + hexdigest[8:10] + ":" + hexdigest[10:12]
+        #print(macstr)
+        logfile.write(eeprom.serial + ", " + macstr + ", " + eeprom.product + ", " + binascii.hexlify(eeprom.device_id).decode("ascii") + "\n" )
 
         cur_serial += 1
