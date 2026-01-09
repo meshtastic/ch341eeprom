@@ -228,7 +228,7 @@ if __name__ == "__main__":
         firstbyte = hexdigest[:2]
         intfirstbyte = int(firstbyte, 16)
         intfirstbyte = hex(((intfirstbyte << 4) | 2) % 256)[2:4]
-        macstr = f"{intfirstbyte}:" + hexdigest[2:4] + ":" + hexdigest[4:6] + ":" + hexdigest[6:8] + ":" + hexdigest[8:10] + ":" + hexdigest[10:12]
+        macstr = f"{intfirstbyte}:" + hexdigest[2:4] + hexdigest[4:6] + hexdigest[6:8] + hexdigest[8:10] + hexdigest[10:12]
         #print(macstr)
         logfile.write(eeprom.serial + ", " + macstr + ", " + eeprom.product + ", " + binascii.hexlify(eeprom.device_id).decode("ascii") + "\n" )
 
