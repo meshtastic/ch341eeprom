@@ -67,7 +67,9 @@ class eepCH341(object):
         if len(serial) == 8:
             self.serial = serial
         else:
-            raise ValueError("Serial number must be 8 digits")
+            # raise ValueError("Serial number must be 8 digits")
+            serial = "0000000" + serial
+            self.serial = serial[-8:]
         if len(product) < 79:
             self.product = product
         else:
