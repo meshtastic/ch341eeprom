@@ -221,7 +221,7 @@ if __name__ == "__main__":
 
         print("")
 
-        hash_object = hashlib.sha256(eeprom.serial.encode())
+        hash_object = hashlib.sha256((eeprom.serial + eeprom.product).encode())
         hexdigest = hash_object.hexdigest()
         firstbyte = hexdigest[:2]
         intfirstbyte = int(firstbyte, 16)
