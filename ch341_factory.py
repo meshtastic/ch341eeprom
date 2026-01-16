@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os
 import subprocess
 import argparse
@@ -114,6 +116,7 @@ class eepCH341(object):
         return self.bytes().hex()
 
     def erase(self, bin_ch341eeprom: str):
+        print("Erasing EEPROM...")
         r = subprocess.run([
             bin_ch341eeprom,
             # "--verbose",
@@ -134,6 +137,16 @@ class eepCH341(object):
             "--size", self.size
         ], capture_output=True, check=True)
 
+        stdout = r.stdout.decode().strip()
+        stderr = r.stderr.decode().strip()
+        if stdout != "":
+            print(stdout)
+        if stderr != "":
+            print(stderr)
+        if "Couldn't open device" in stderr:
+            print("Ensure the device is in Programming Mode and try again.")
+            exit(1)
+
         # Read the EEPROM file and return it as a byte array
         with open("read_eeprom.bin", "rb") as f:
             data = f.read()
@@ -149,6 +162,7 @@ class eepCH341(object):
         with open("write_eeprom.bin", "wb") as f:
             f.write(self.bytes())
         # Use `ch341eeprom` to flash the EEPROM
+        print("Flashing EEPROM...")
         r = subprocess.run([
             bin_ch341eeprom,
             # "--verbose",
@@ -167,6 +181,7 @@ class eepCH341(object):
         with open("verify_eeprom.bin", "wb") as f:
             f.write(self.bytes())
         # Use `ch341eeprom` to verify the EEPROM
+        print("Verifying EEPROM...")
         r = subprocess.run([
             bin_ch341eeprom,
             # "--verbose",
